@@ -12,7 +12,9 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Content\background.png" />
     <None Remove="Content\pixil-frame-0.png" />
+    <None Remove="Content\tribbleGrey.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
