@@ -8,11 +8,11 @@ namespace Final_Project
 {
     public class Game1 : Game
     {
-        float botAngleMouse, botAngle;
+        float botAngleMouse, botAngle, healthPlayer, healthEnemy, currenthealthPlayer, currenthealthEnemy;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         Texture2D background;
-        Texture2D bot;
+        Texture2D bot, healthbarplayer, healthbarEnemy;
         Rectangle botrectPlayer, botrectEnemy;
         Vector2 botspeed1, botlocationmouse;
         MouseState mouseState;
@@ -32,6 +32,10 @@ namespace Final_Project
             botrectPlayer = new Rectangle(500, 400, 100, 100);
             botspeed1 = new Vector2(-2, -2);
             base.Initialize();
+            healthEnemy = 100;
+            healthPlayer = 100;
+            currenthealthPlayer = 100;
+            currenthealthEnemy  = 100;
         }
 
         protected override void LoadContent()
@@ -54,8 +58,19 @@ namespace Final_Project
             botrectPlayer.Y += (int)botspeed1.Y;
             if (botrectPlayer.Bottom > 870 || botrectPlayer.Y < 30)
                 botspeed1.Y *= -1;
+            if (healthPlayer < currenthealthPlayer)
+            {
+                healthbarplayer = Content.Load<Texture2D>($"{healthPlayer}");
+            }
+            if (healthEnemy < currenthealthEnemy)
+            {
+                healthbarEnemy = Content.Load<Texture2D>($"{healthEnemy}");
+            }
+
             // TODO: Add your update logic here
             botAngleMouse = GetAngle(botlocationmouse, new Vector2(mouseState.X, mouseState.Y));
+            currenthealthPlayer = healthPlayer;
+            currenthealthEnemy = healthEnemy;
             base.Update(gameTime);
         }
 
