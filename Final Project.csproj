@@ -13,6 +13,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Content\background.png" />
+    <None Remove="Content\backgroundnew.png" />
+    <None Remove="Content\healthbarplayer.png" />
     <None Remove="Content\pixil-frame-0.png" />
     <None Remove="Content\tribbleGrey.png" />
   </ItemGroup>
