@@ -8,16 +8,19 @@ namespace Final_Project
 {
     public class Game1 : Game
     {
-        float botAngle;
+        float botAngle1,botAngle2;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         Texture2D background;
-        Texture2D bot, healthbarplayer, healthbarEnemy;
+        Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy;
         Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect;
-        Vector2 botspeed1, botlocationmouse;
+        Vector2 botspeed1, botspeed2;
         MouseState mouseState;
-        double healthmathplayer, healthPlayer, healthEnemy, healthmultiplier;
-
+        double healthmathplayer, healthPlayer, healthEnemy, healthmultiplier, healthmathEnemy, botplayerDamage, botenemyDamage;
+        Random movementPlayer = new Random();
+        Random movementEnemy = new Random();
+        Random timer = new Random();
+        int timerCalc, timerCalc1, TimerCalc2;
 
         public Game1()
         {
@@ -32,33 +35,55 @@ namespace Final_Project
             _graphics.PreferredBackBufferHeight = 900;
             _graphics.PreferredBackBufferWidth = 1200;
             _graphics.ApplyChanges();
-            botrectPlayer = new Rectangle(100, 400, 100, 100);
-            botspeed1 = new Vector2(-2, -2);
+            botrectPlayer = new Rectangle(100, 400, 70, 70);
+            botrectEnemy = new Rectangle(770 ,400 ,70 ,70);
+            botspeed2 = new Vector2(-2, 0);
+            botspeed1 = new Vector2(2, 0);
             healthbarplayerRect = new Rectangle(972, 224, 42, 580);
+            healthbarenemyRect = new Rectangle(1092, 224, 42, 580);
             base.Initialize();
             healthEnemy = 100;
             healthPlayer = 100;
-            botAngle = 0;
+            botAngle1 = 0;
+            botAngle2 = 0;
             healthmultiplier = 5.8;
+            botplayerDamage = 1;
+            botenemyDamage = 1;
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             background = Content.Load<Texture2D>("backgroundnew1");
-            bot = Content.Load<Texture2D>("bot_blue");
+            botPlayer = Content.Load<Texture2D>("bot_blue");
+            botEnemy = Content.Load<Texture2D>("bot_red");
             healthbarplayer = Content.Load<Texture2D>("healthbarplayer1");
+            healthbarEnemy = Content.Load<Texture2D>("healthbarenemy1");
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
 
+            if (timerCalc1 == 0)
+            {
+                timerCalc = timer.Next(1,8);
+                timerCalc1 = timerCalc *60;
+                botspeed1.X = movementPlayer.Next(-2, 2);
+                botspeed1.Y = movementPlayer.Next(-2, 2);
+            }
+            if (TimerCalc2 == 0)
+            {
+                timerCalc = timer.Next(1, 8);
+                TimerCalc2 = timerCalc * 60;
+                botspeed2.X = movementEnemy.Next(-2, 2);
+                botspeed2.Y = movementEnemy.Next(-2, 2);
+            }
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             mouseState = Mouse.GetState();
             Window.Title = mouseState.X + ", " + mouseState.Y;
-            if (healthEnemy > 1)
+            if (healthEnemy > 1 || healthPlayer > 1)
             {
                 botrectPlayer.X += (int)botspeed1.X;
                 if (botrectPlayer.Right > 870 || botrectPlayer.X < 30)
@@ -67,17 +92,45 @@ namespace Final_Project
                 if (botrectPlayer.Bottom > 870 || botrectPlayer.Y < 30)
                     botspeed1.Y *= -1;
             }
+            if (healthPlayer > 1 || healthEnemy > 1)
+            {
+                botrectEnemy.X += (int)botspeed2.X;
+                if (botrectEnemy.Right > 870 || botrectEnemy.X < 30)
+                    botspeed2.X *= -1;
+                botrectEnemy.Y += (int)botspeed2.Y;
+                if (botrectEnemy.Bottom > 870 || botrectEnemy.Y < 30)
+                    botspeed2.Y *= -1;
+            }
+            if (botrectEnemy.Intersects(botrectPlayer))
+            {
+
+                    botspeed2.X *= -1;
+                    botspeed2.Y *= -1;
+                    botspeed1.Y *= -1;
+                    botspeed1.X *= -1;
+                healthPlayer = healthPlayer - botenemyDamage;
+                healthEnemy = healthEnemy - botplayerDamage;
+            }
+
+
             if (healthPlayer < 100)
             {
                 healthmathplayer = (healthPlayer *healthmultiplier);
                 healthbarplayerRect = new Rectangle(972, 224, 42, Convert.ToInt32(healthmathplayer));
             }
-            
+            if (healthEnemy < 100)
+            {
+                healthmathEnemy = (healthEnemy * healthmultiplier);
+                healthbarenemyRect = new Rectangle(1092, 224, 42, Convert.ToInt32(healthmathEnemy));
+            }
+
 
             // TODO: Add your update logic here
 
-            botAngle = (float)Math.Atan2(botspeed1.Y, botspeed1.X);
-
+            botAngle1 = (float)Math.Atan2(botspeed1.Y, botspeed1.X);
+            botAngle2 = (float)Math.Atan2(botspeed2.Y, botspeed2.X);
+            timerCalc1--;
+            TimerCalc2--;
             base.Update(gameTime);
         }
 
@@ -87,8 +140,10 @@ namespace Final_Project
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
             _spriteBatch.Draw(background, new Rectangle(0 , 0, 1200, 900), Color.White );
-            _spriteBatch.Draw(bot, new Rectangle(botrectPlayer.Center, botrectPlayer.Size), null, Color.White, botAngle, new Vector2(bot.Width / 2, bot.Height / 2), SpriteEffects.None, 1f);
+            _spriteBatch.Draw(botPlayer, new Rectangle(botrectPlayer.Center, botrectPlayer.Size), null, Color.White, botAngle1, new Vector2(botPlayer.Width / 2, botPlayer.Height / 2), SpriteEffects.None, 1f);
+            _spriteBatch.Draw(botEnemy, new Rectangle(botrectEnemy.Center, botrectEnemy.Size), null, Color.White, botAngle2, new Vector2(botEnemy.Width / 2, botEnemy.Height / 2), SpriteEffects.None, 1f);
             _spriteBatch.Draw(healthbarplayer, healthbarplayerRect, Color.White);
+            _spriteBatch.Draw(healthbarEnemy, healthbarenemyRect, Color.White);
             _spriteBatch.End();
             base.Draw(gameTime);
             
