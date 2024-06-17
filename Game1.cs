@@ -12,10 +12,10 @@ namespace Final_Project
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         Texture2D buttonStartTexture, buttonOptionsTexture, buttonExitTexture;
-        Texture2D background, IntroTexture, GearTexture, GameSelectTexture;
-        Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy;
-        Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect;
-        Vector2 botspeed1, botspeed2;
+        Texture2D background, IntroTexture, GearTexture, GameSelectTexture, OptionsMenuTexture;
+        Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy, gun;
+        Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect, gunRect, gunRect2;
+        Vector2 botspeed1, botspeed2, botLocation1, botlocation2;
         MouseState mouseState, prevmouseState;
         double healthmathplayer, healthPlayer, healthEnemy, healthmultiplier, healthmathEnemy, botplayerDamage, botenemyDamage;
         Random movementPlayer = new Random();
@@ -61,6 +61,9 @@ namespace Final_Project
             botenemyDamage = 1;
             screen = Screen.Intro;
             buttonStart = new Button(buttonStartTexture, new Rectangle(525, 233, 150, 75));
+            buttonOption = new Button(buttonOptionsTexture, new Rectangle(0, 0, 150, 75));
+            buttonExit = new Button(buttonExitTexture, new Rectangle(300, 300, 150, 75));
+            gunRect = new Rectangle(0,0,50,75);
             base.Initialize();
         }
 
@@ -74,27 +77,34 @@ namespace Final_Project
             healthbarEnemy = Content.Load<Texture2D>("healthbarenemy1");
             buttonStartTexture = Content.Load<Texture2D>("ButtonStart");
             IntroTexture = Content.Load<Texture2D>("StartMenu");
+            buttonExitTexture = Content.Load<Texture2D>("ButtonExit");
+            buttonOptionsTexture = Content.Load<Texture2D>("ButtonOptions");
+            GameSelectTexture = Content.Load<Texture2D>("GameSelect");
+            gun = Content.Load<Texture2D>("Gun");
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
+
             prevmouseState = mouseState;
             mouseState = Mouse.GetState();
             Window.Title = mouseState.X + ", " + mouseState.Y;
             if (screen == Screen.Intro)
             {
                 buttonStart.Update(mouseState, prevmouseState);
+                buttonOption.Update(mouseState, prevmouseState);
+                buttonExit.Update(mouseState, prevmouseState);
 
                 if (buttonStart.IsClicked(mouseState, prevmouseState))
                 {
-                    screen = Screen.Gear;
+                    screen = Screen.Gameplay;
                 }
                 if (buttonOption.IsClicked(mouseState, prevmouseState))
                 {
                     screen = Screen.Options;
                 }
-                if (buttonExit.IsClicked(mouseState, prevmouseState)) ;
+                if (buttonExit.IsClicked(mouseState, prevmouseState)) 
                 {
                     Exit();
                 }
@@ -106,13 +116,13 @@ namespace Final_Project
             }
             if (screen == Screen.GameSelect)
             {
-
+                screen = Screen.GameSelect;
             }
             if (screen == Screen.Gameplay)
             {
                 if (timerCalc1 == 0)
                 {
-                    timerCalc = timer.Next(1, 8);
+                    timerCalc = timer.Next(1, 6);
                     timerCalc1 = timerCalc * 60;
                     botspeed1.X = movementPlayer.Next(-2, 2);
                     botspeed1.Y = movementPlayer.Next(-2, 2);
@@ -192,13 +202,26 @@ namespace Final_Project
                 _spriteBatch.Draw(botEnemy, new Rectangle(botrectEnemy.Center, botrectEnemy.Size), null, Color.White, botAngle2, new Vector2(botEnemy.Width / 2, botEnemy.Height / 2), SpriteEffects.None, 1f);
                 _spriteBatch.Draw(healthbarplayer, healthbarplayerRect, Color.White);
                 _spriteBatch.Draw(healthbarEnemy, healthbarenemyRect, Color.White);
+                _spriteBatch.Draw(gun, new Rectangle(botrectPlayer.Center, gunRect.Size), Color.White);
 
             }
             if (screen == Screen.Intro)
             {
                 _spriteBatch.Draw(IntroTexture, new Rectangle(0, 0, 1200, 900), Color.White);
                 _spriteBatch.Draw(buttonStartTexture, new Rectangle(525, 233, 150, 75), Color.White);
-                _spriteBatch.Draw(buttonOptionsTexture, new Rectangle(),);
+                _spriteBatch.Draw(buttonOptionsTexture, new Rectangle(0, 0, 150, 75),Color.White);
+                _spriteBatch.Draw(buttonExitTexture, new Rectangle(300,300,150,75), Color.White);
+            }
+            if (screen == Screen.Options)
+            {
+
+            }
+            if (screen == Screen.Gear)
+            {
+
+            }
+            if (screen == Screen.GameSelect)
+            {
 
             }
             _spriteBatch.End();
