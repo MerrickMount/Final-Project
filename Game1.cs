@@ -11,7 +11,7 @@ namespace Final_Project
         float botAngle1,botAngle2;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        Texture2D buttonStartTexture;
+        Texture2D buttonStartTexture, buttonOptionsTexture, buttonExitTexture;
         Texture2D background, IntroTexture, GearTexture, GameSelectTexture;
         Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy;
         Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect;
@@ -28,7 +28,8 @@ namespace Final_Project
             Intro,
             Gear,
             GameSelect,
-            Gameplay
+            Gameplay,
+            Options
         }
         Screen screen;
 
@@ -89,9 +90,9 @@ namespace Final_Project
                 {
                     screen = Screen.Gear;
                 }
-                if (buttonOption.IsClicked(mouseState,prevmouseState))
+                if (buttonOption.IsClicked(mouseState, prevmouseState))
                 {
-
+                    screen = Screen.Options;
                 }
                 if (buttonExit.IsClicked(mouseState, prevmouseState)) ;
                 {
@@ -197,6 +198,7 @@ namespace Final_Project
             {
                 _spriteBatch.Draw(IntroTexture, new Rectangle(0, 0, 1200, 900), Color.White);
                 _spriteBatch.Draw(buttonStartTexture, new Rectangle(525, 233, 150, 75), Color.White);
+                _spriteBatch.Draw(buttonOptionsTexture, new Rectangle(),);
 
             }
             _spriteBatch.End();
