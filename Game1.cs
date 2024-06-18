@@ -21,7 +21,7 @@ namespace Final_Project
         Random movementPlayer = new Random();
         Random movementEnemy = new Random();
         Random timer = new Random();
-        int timerCalc, timerCalc1, TimerCalc2;
+        int timerCalc, timerCalc1, TimerCalc2, playerMoney;
         Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3;
         enum Screen
         {
@@ -29,7 +29,9 @@ namespace Final_Project
             Gear,
             GameSelect,
             Gameplay,
-            Options
+            Options,
+            win,
+            lose
         }
         Screen screen;
 
@@ -52,6 +54,7 @@ namespace Final_Project
             botspeed1 = new Vector2(2, 0);
             healthbarplayerRect = new Rectangle(972, 224, 42, 580);
             healthbarenemyRect = new Rectangle(1092, 224, 42, 580);
+            playerMoney = 0;
             healthEnemy = 100;
             healthPlayer = 100;
             botAngle1 = 0;
@@ -120,6 +123,10 @@ namespace Final_Project
             }
             if (screen == Screen.Gear)
             {
+                if (playerMoney < 0)
+                {
+                    playerMoney = 0;
+                }
 
             }
             if (screen == Screen.GameSelect)
@@ -204,6 +211,16 @@ namespace Final_Project
                 {
                     healthmathEnemy = (healthEnemy * healthmultiplier);
                     healthbarenemyRect = new Rectangle(1092, 224, 42, Convert.ToInt32(healthmathEnemy));
+                }
+                if (healthEnemy < 1)
+                {
+                    screen = Screen.win;
+                    playerMoney = playerMoney + 100;
+                }
+                if (healthPlayer < 1)
+                {
+                    screen = Screen.lose;
+                    playerMoney = playerMoney - 25;
                 }
                 if (Vector2.Distance(botrectEnemy.Location.ToVector2(), botrectPlayer.Location.ToVector2()) > 50) ;
                 {
