@@ -8,10 +8,10 @@ namespace Final_Project
 {
     public class Game1 : Game
     {
-        float botAngle1,botAngle2;
+        float botAngle1,botAngle2, gunAngle1, gunAngle2;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        Texture2D buttonStartTexture, buttonOptionsTexture, buttonExitTexture;
+        Texture2D buttonStartTexture, buttonOptionsTexture, buttonExitTexture, buttonLevel1Texture;
         Texture2D background, IntroTexture, GearTexture, GameSelectTexture, OptionsMenuTexture;
         Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy, gun;
         Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect, gunRect, gunRect2;
@@ -22,7 +22,7 @@ namespace Final_Project
         Random movementEnemy = new Random();
         Random timer = new Random();
         int timerCalc, timerCalc1, TimerCalc2;
-        Button buttonStart, buttonOption, buttonExit;
+        Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3;
         enum Screen
         {
             Intro,
@@ -56,14 +56,18 @@ namespace Final_Project
             healthPlayer = 100;
             botAngle1 = 0;
             botAngle2 = 0;
+            gunAngle1 = 0;
             healthmultiplier = 5.8;
             botplayerDamage = 1;
             botenemyDamage = 1;
             screen = Screen.Intro;
             buttonStart = new Button(buttonStartTexture, new Rectangle(525, 233, 150, 75));
-            buttonOption = new Button(buttonOptionsTexture, new Rectangle(0, 0, 150, 75));
-            buttonExit = new Button(buttonExitTexture, new Rectangle(300, 300, 150, 75));
-            gunRect = new Rectangle(0,0,50,75);
+            buttonOption = new Button(buttonOptionsTexture, new Rectangle(525, 385, 150, 75));
+            buttonExit = new Button(buttonExitTexture, new Rectangle(525, 540, 150, 75));
+            buttonLevel1 = new Button(buttonLevel1Texture, new Rectangle(525, 150, 150, 75));
+            buttonLevel2 = new Button(buttonLevel2Texture, new Rectangle(525, 150, 150, 75));
+            buttonLevel3 = new Button(buttonLevel3Texture, new Rectangle(525, 150, 150, 75));
+            gunRect = new Rectangle(0,0,65,40);
             base.Initialize();
         }
 
@@ -81,6 +85,10 @@ namespace Final_Project
             buttonOptionsTexture = Content.Load<Texture2D>("ButtonOptions");
             GameSelectTexture = Content.Load<Texture2D>("GameSelect");
             gun = Content.Load<Texture2D>("Gun");
+            buttonLevel1Texture = Content.Load<Texture2D>("ButtonLevel1");
+            buttonLevel2Texture = Content.Load<Texture2D>("ButtonLevel2");
+            buttonLevel3Texture = Content.Load<Texture2D>("ButtonLevel3");
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -98,7 +106,7 @@ namespace Final_Project
 
                 if (buttonStart.IsClicked(mouseState, prevmouseState))
                 {
-                    screen = Screen.Gameplay;
+                    screen = Screen.GameSelect;
                 }
                 if (buttonOption.IsClicked(mouseState, prevmouseState))
                 {
@@ -116,7 +124,28 @@ namespace Final_Project
             }
             if (screen == Screen.GameSelect)
             {
-                screen = Screen.GameSelect;
+                buttonStart.Update(mouseState, prevmouseState);
+                buttonOption.Update(mouseState, prevmouseState);
+                buttonExit.Update(mouseState, prevmouseState);
+
+                if (buttonLevel1.IsClicked(mouseState, prevmouseState))
+                {
+                    screen = Screen.Gameplay;
+                    
+                }
+                if (ButtonLevel2.IsClicked(mouseState, prevmouseState))
+                {
+                    screen = Screen.Gameplay;
+                    botenemyDamage = 2;
+                    healthEnemy = 110;
+
+                }
+                if (buttonlevel3.IsClicked(mouseState, prevmouseState))
+                {
+                    screen = Screen.Gameplay;
+                    botenemyDamage = 3;
+                    healthEnemy = 120;
+                }
             }
             if (screen == Screen.Gameplay)
             {
@@ -176,14 +205,16 @@ namespace Final_Project
                     healthmathEnemy = (healthEnemy * healthmultiplier);
                     healthbarenemyRect = new Rectangle(1092, 224, 42, Convert.ToInt32(healthmathEnemy));
                 }
+                if (Vector2.Distance(botrectEnemy.Location.ToVector2(), botrectPlayer.Location.ToVector2()) > 50) ;
+                {
+                    //Shoot gun at the other
+                }
                 botAngle1 = (float)Math.Atan2(botspeed1.Y, botspeed1.X);
                 botAngle2 = (float)Math.Atan2(botspeed2.Y, botspeed2.X);
+                gunAngle1 = (float)Math.Atan2(botspeed1.Y, botspeed1.X);
+                gunAngle2 = (float)Math.Atan2(botspeed2.Y, botspeed2.X);
                 timerCalc1--;
                 TimerCalc2--;
-            }
-            if (Vector2.Distance(botrectEnemy.Location.ToVector2(), botrectPlayer.Location.ToVector2()) > 50);
-            {
-                //Shoot gun at the other
             }
             // TODO: Add your update logic here
 
@@ -202,27 +233,28 @@ namespace Final_Project
                 _spriteBatch.Draw(botEnemy, new Rectangle(botrectEnemy.Center, botrectEnemy.Size), null, Color.White, botAngle2, new Vector2(botEnemy.Width / 2, botEnemy.Height / 2), SpriteEffects.None, 1f);
                 _spriteBatch.Draw(healthbarplayer, healthbarplayerRect, Color.White);
                 _spriteBatch.Draw(healthbarEnemy, healthbarenemyRect, Color.White);
-                _spriteBatch.Draw(gun, new Rectangle(botrectPlayer.Center, gunRect.Size), Color.White);
+                _spriteBatch.Draw(gun, new Rectangle((botrectPlayer.Center.X - gunRect.Width /3), botrectPlayer.Center.Y - gunRect.Height / 2, gunRect.Width, gunRect.Height), null, Color.White, gunAngle1, new Vector2(gunRect.Width - gunRect.Width/3 , gunRect.Height/2), SpriteEffects.None, 1f);
 
             }
             if (screen == Screen.Intro)
             {
                 _spriteBatch.Draw(IntroTexture, new Rectangle(0, 0, 1200, 900), Color.White);
                 _spriteBatch.Draw(buttonStartTexture, new Rectangle(525, 233, 150, 75), Color.White);
-                _spriteBatch.Draw(buttonOptionsTexture, new Rectangle(0, 0, 150, 75),Color.White);
-                _spriteBatch.Draw(buttonExitTexture, new Rectangle(300,300,150,75), Color.White);
+                _spriteBatch.Draw(buttonOptionsTexture, new Rectangle(525, 385, 150, 75),Color.White);
+                _spriteBatch.Draw(buttonExitTexture, new Rectangle(525,540,150,75), Color.White);
             }
             if (screen == Screen.Options)
             {
-
+                //_spriteBatch.Draw(OptionsMenuTexture, new Rectangle(0, 0, 1200, 900), Color.White);
             }
             if (screen == Screen.Gear)
             {
-
+                _spriteBatch.Draw(GearTexture, new Rectangle(0, 0, 1200, 900), Color.White);
             }
             if (screen == Screen.GameSelect)
             {
-
+                _spriteBatch.Draw(GameSelectTexture, new Rectangle(0, 0, 1200, 900), Color.White);
+                _spriteBatch.Draw(buttonLevel1Texture, new Rectangle(525, 150, 150, 75),Color.White);
             }
             _spriteBatch.End();
             base.Draw(gameTime);
