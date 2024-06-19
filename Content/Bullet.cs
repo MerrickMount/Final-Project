@@ -30,7 +30,7 @@ namespace Final_Project.Content
             _rect = new Rectangle(location.ToPoint(), new Point(_size, _size));
             _direction = target - location;
             _direction.Normalize();
-            _speed = 15;
+            _speed = 3;
         }
         public Rectangle Rect
         {
@@ -41,7 +41,7 @@ namespace Final_Project.Content
         {
             _location += _direction * _speed;
             _rect.Location = _location.ToPoint();
-            _angle = (float)Math.Atan2(_direction.Y, _direction.X) + 10;
+            _angle = (float)Math.Atan2(_direction.Y, _direction.X) + 1;
         }
 
         public void Draw(SpriteBatch spriteBatch)
