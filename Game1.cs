@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Final_Project.Content;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Final_Project
 {
@@ -23,6 +25,12 @@ namespace Final_Project
         Random timer = new Random();
         int timerCalc, timerCalc1, TimerCalc2, playerMoney;
         Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3, buttonStartGear, buttonExitGear;
+        List<Bullet> bullets;
+        List<Bullet> bullets1;
+        Rectangle bulletRect;
+        Vector2 bulletSpeed;
+        Texture2D bulletTexture;
+        float bulletLocation;
         enum Screen
         {
             Intro,
@@ -73,6 +81,10 @@ namespace Final_Project
             buttonStartGear = new Button(buttonExitTexture, new Rectangle(1070, 791, 120, 82));
             buttonExitGear = new Button(buttonExitTexture, new Rectangle(828,791,122,82));
             gunRect = new Rectangle(0,0,101,50);
+
+            bulletRect = new Rectangle(100,100,5,5);
+            bullets = new List<Bullet>();
+            bullets1 = new List<Bullet>();
             base.Initialize();
         }
 
@@ -94,6 +106,7 @@ namespace Final_Project
             buttonLevel2Texture = Content.Load<Texture2D>("ButtonLevel2");
             buttonLevel3Texture = Content.Load<Texture2D>("ButtonLevel3");
             GearTexture = Content.Load<Texture2D>("Options1");
+            //bulletTexture = Content.Load<Texture2D>("bullet");
 
             // TODO: use this.Content to load your game content here
         }
