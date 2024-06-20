@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.Direct2D1.Effects;
 using System;
 using System.Collections.Generic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -11,28 +12,28 @@ namespace Final_Project
 {
     public class Game1 : Game
     {
-        float botAngle1,botAngle2, gunAngle1, gunAngle2;
+        float botAngle1,botAngle2;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        Texture2D buttonStartTexture, buttonOptionsTexture, buttonExitTexture, buttonLevel1Texture, buttonLevel2Texture, buttonLevel3Texture;
+        Texture2D buttonStartTexture, buttonOptionsTexture, buttonExitTexture, buttonLevel1Texture, buttonLevel2Texture, buttonLevel3Texture, buttonReturnTexture;
         Texture2D background, IntroTexture, GearTexture, GameSelectTexture, OptionsMenuTexture, explosion;
-        Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy, gun, armourUp, damageUp;
-        Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect, gunRect;
-        Vector2 botspeed1, botspeed2, botLocation1, botlocation2;
+        Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy, armourUp, damageUp;
+        Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect;
+        Vector2 botspeed1, botspeed2;
         MouseState mouseState, prevmouseState;
-        double healthmathplayer, healthPlayer, healthEnemy, healthmultiplier, healthmathEnemy, botplayerDamage, botenemyDamage;
+        double healthmathplayer, healthPlayer, healthEnemy, healthmultiplier, healthmathEnemy, botplayerDamage, botenemyDamage, healthPlayerMAX;
         Random movementPlayer = new Random();
         Random movementEnemy = new Random();
         Random timer = new Random();
         int timerCalc, timerCalc1, TimerCalc2, playerMoney, Timer, Timer2, Difficulty;
-        Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3, buttonStartGear, buttonExitGear, buttonExitOptions, TESTBUTTON, purchaseArmour, PurchaseDamage;
+        Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3, buttonStartGear, buttonExitGear, buttonExitOptions, TESTBUTTON, purchaseArmour, PurchaseDamage, buttonReturn;
         List<Bullet> bullets;
         List<Bullet> bullets1;
         Rectangle bulletRect;
         Vector2 bulletSpeed;
         Texture2D bulletTexture;
         float bulletLocation;
-        private SpriteFont font;
+        private SpriteFont font, Cashfont;
         enum Screen
         {
             Intro,
@@ -69,14 +70,14 @@ namespace Final_Project
             playerMoney = 0;
             healthEnemy = 100;
             healthPlayer = 100;
+            healthPlayerMAX = 100;
             botAngle1 = 0;
             botAngle2 = 0;
-            gunAngle1 = 0;
             healthmultiplier = 5.8;
-            botplayerDamage = 1;
-            botenemyDamage = 1;
+            botplayerDamage = 4.5;
+            botenemyDamage = 4;
             screen = Screen.Intro;
-            buttonStart = new Button(buttonStartTexture, new Rectangle(525, 233, 150, 75));
+            buttonStart = new Button(buttonStartTexture, new Rectangle(525, 120, 150, 75));
             buttonOption = new Button(buttonOptionsTexture, new Rectangle(525, 385, 150, 75));
             buttonExit = new Button(buttonExitTexture, new Rectangle(525, 540, 150, 75));
             buttonLevel1 = new Button(buttonLevel1Texture, new Rectangle(525, 150, 150, 75));
@@ -86,9 +87,9 @@ namespace Final_Project
             buttonExitGear = new Button(buttonExitTexture, new Rectangle(828,791,122,82));
             buttonExitOptions = new Button(buttonExitTexture, new Rectangle(1000, 800, 150, 75));
             TESTBUTTON = new Button(buttonExitTexture, new Rectangle(1000, 800, 150, 75));
-            gunRect = new Rectangle(0,0,101,50);
-            purchaseArmour = new Button(armourUp, new Rectangle(10, 10, 100, 100));
-            PurchaseDamage = new Button(damageUp, new Rectangle(10, 10, 100, 100));
+            purchaseArmour = new Button(armourUp, new Rectangle(16, 250, 350, 216));
+            PurchaseDamage = new Button(damageUp, new Rectangle(425, 250, 350, 216));
+            buttonReturn = new Button(buttonReturnTexture, new Rectangle(500,700,150,75));
 
             bulletRect = new Rectangle(100,100,10,10);
             bullets = new List<Bullet>();
@@ -106,11 +107,10 @@ namespace Final_Project
             healthbarplayer = Content.Load<Texture2D>("healthbarplayer1");
             healthbarEnemy = Content.Load<Texture2D>("healthbarenemy1");
             buttonStartTexture = Content.Load<Texture2D>("ButtonStart");
-            IntroTexture = Content.Load<Texture2D>("StartMenu");
+            IntroTexture = Content.Load<Texture2D>("StartMenu1");
             buttonExitTexture = Content.Load<Texture2D>("ButtonExit");
             buttonOptionsTexture = Content.Load<Texture2D>("ButtonOptions");
             GameSelectTexture = Content.Load<Texture2D>("GameSelect");
-            gun = Content.Load<Texture2D>("Gun1");
             buttonLevel1Texture = Content.Load<Texture2D>("ButtonLevel1");
             buttonLevel2Texture = Content.Load<Texture2D>("ButtonLevel2");
             buttonLevel3Texture = Content.Load<Texture2D>("ButtonLevel3");
@@ -119,8 +119,10 @@ namespace Final_Project
             OptionsMenuTexture = Content.Load<Texture2D>("OPTIONSdone");
             font = Content.Load<SpriteFont>("font");
             explosion = Content.Load<Texture2D>("explosion");
-            damageUp = Content.Load<Texture2D>("damageUpgrade");
-            armourUp = Content.Load<Texture2D>("Shield");
+            damageUp = Content.Load<Texture2D>("ButtonDamage");
+            armourUp = Content.Load<Texture2D>("ButtonArmour");
+            Cashfont = Content.Load<SpriteFont>("Cash");
+            buttonReturnTexture = Content.Load<Texture2D>("ReurnButton");
             // TODO: use this.Content to load your game content here
         }
 
@@ -164,10 +166,8 @@ namespace Final_Project
             {
                 buttonStartGear.Update(mouseState, prevmouseState);
                 buttonExitGear.Update(mouseState, prevmouseState);
-                if (playerMoney < 0)
-                {
-                    playerMoney = 0;
-                }
+                purchaseArmour.Update(mouseState, prevmouseState);
+                PurchaseDamage.Update(mouseState, prevmouseState);
                 if (buttonStartGear.IsClicked(mouseState, prevmouseState))
                 {
                     screen = Screen.GameSelect;
@@ -175,6 +175,16 @@ namespace Final_Project
                 if (buttonExitGear.IsClicked(mouseState, prevmouseState))
                 {
                     screen = Screen.Intro;
+                }
+                if (purchaseArmour.IsClicked(mouseState, prevmouseState) && playerMoney >= 250)
+                {
+                    healthPlayerMAX = healthPlayerMAX + 10;
+                    playerMoney = playerMoney - 250;
+                }
+                if (PurchaseDamage.IsClicked(mouseState, prevmouseState) && playerMoney >= 250)
+                {
+                    botplayerDamage = botplayerDamage +2;
+                    playerMoney = playerMoney - 250;
                 }
             }
             if (screen == Screen.GameSelect)
@@ -186,30 +196,35 @@ namespace Final_Project
                 if (buttonLevel1.IsClicked(mouseState, prevmouseState))
                 {
                     screen = Screen.Gameplay;
-                    botenemyDamage = 1;
+                    botenemyDamage = 4;
                     healthEnemy = 100;
                     GameWinorLose.paused = false;
                     Difficulty = 1;
+                    healthPlayer = healthPlayerMAX;
                 }
                 if (buttonLevel2.IsClicked(mouseState, prevmouseState))
                 {
                     screen = Screen.Gameplay;
-                    botenemyDamage = 2;
+                    botenemyDamage = 6;
                     healthEnemy = 110;
                     GameWinorLose.paused = false;
                     Difficulty = 2;
+                    healthPlayer = healthPlayerMAX;
                 }
                 if (buttonLevel3.IsClicked(mouseState, prevmouseState))
                 {
                     screen = Screen.Gameplay;
-                    botenemyDamage = 3;
+                    botenemyDamage = 8;
                     healthEnemy = 120;
                     GameWinorLose.paused = false;
                     Difficulty = 3;
+                    healthPlayer = healthPlayerMAX;
                 }
             }
             if (screen == Screen.Gameplay)
             {
+                healthbarplayerRect = new Rectangle(972, 224, 42, 580);
+                healthbarenemyRect = new Rectangle(1092, 224, 42, 580);
                 if (GameWinorLose.paused == false)
                 {
                     TESTBUTTON.Update(mouseState, prevmouseState);
@@ -231,6 +246,32 @@ namespace Final_Project
                         timerCalc1 = timerCalc * 60;
                         botspeed1.X = movementPlayer.Next(-2, 2);
                         botspeed1.Y = movementPlayer.Next(-2, 2);
+                        if (botspeed1.X == 0)
+                        {
+                            botspeed1.X = movementPlayer.Next(-2, 2);
+                        }
+                        if (botspeed1.Y == 0)
+                        {
+                            botspeed1.Y = movementPlayer.Next(-2, 2);
+                        }
+
+                        if (botspeed1.X == -1)
+                        {
+                            botspeed1.X = -2;
+                        }
+                        if (botspeed1.X == 1)
+                        {
+                            botspeed1.X = 2;
+                        }
+                        if (botspeed1.Y == 1)
+                        {
+                            botspeed1.Y = 2;
+                        }
+                        if (botspeed1.Y == -1)
+                        {
+                            botspeed1.Y = -2;
+                        }
+                        
 
 
                     }
@@ -240,6 +281,31 @@ namespace Final_Project
                         TimerCalc2 = timerCalc * 60;
                         botspeed2.X = movementEnemy.Next(-2, 2);
                         botspeed2.Y = movementEnemy.Next(-2, 2);
+                        if (botspeed2.X == 0)
+                        {
+                            botspeed2.X = movementPlayer.Next(-2, 2);
+                        }
+                        if (botspeed2.Y == 0)
+                        {
+                            botspeed2.Y = movementPlayer.Next(-2, 2);
+                        }
+
+                        if (botspeed2.X == -1)
+                        {
+                            botspeed2.X = -2;
+                        }
+                        if (botspeed2.X == 1)
+                        {
+                            botspeed2.X = 2;
+                        }
+                        if (botspeed2.Y == 1)
+                        {
+                            botspeed2.Y = 2;
+                        }
+                        if (botspeed2.Y == -1)
+                        {
+                            botspeed2.Y = -2;
+                        }
                     }
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                         Exit();
@@ -282,8 +348,8 @@ namespace Final_Project
                     }
                     if (Timer == 0)
                     {
-                        Timer = 60;
-                        if (Vector2.Distance(botrectEnemy.Location.ToVector2(), botrectPlayer.Location.ToVector2()) <= 350)
+                        Timer = 40;
+                        if (Vector2.Distance(botrectEnemy.Location.ToVector2(), botrectPlayer.Location.ToVector2()) <= 450)
                         {
                             bullets.Add(new Bullet(bulletTexture, botrectPlayer.Center.ToVector2(), botrectEnemy.Center.ToVector2(), 10));
 
@@ -292,8 +358,8 @@ namespace Final_Project
                     }
                     if (Timer2 == 0)
                     {
-                        Timer2 = 60;
-                        if (Vector2.Distance(botrectPlayer.Location.ToVector2(), botrectEnemy.Location.ToVector2()) <= 350)
+                        Timer2 = 40;
+                        if (Vector2.Distance(botrectPlayer.Location.ToVector2(), botrectEnemy.Location.ToVector2()) <= 450)
                         {
                             bullets1.Add(new Bullet(bulletTexture, botrectEnemy.Center.ToVector2(), botrectPlayer.Center.ToVector2(), 10));
 
@@ -302,8 +368,6 @@ namespace Final_Project
                     }
                     botAngle1 = (float)Math.Atan2(botspeed1.Y, botspeed1.X);
                     botAngle2 = (float)Math.Atan2(botspeed2.Y, botspeed2.X);
-                    gunAngle1 = (float)Math.Atan2(botspeed1.Y, botspeed1.X);
-                    gunAngle2 = (float)Math.Atan2(botspeed2.Y, botspeed2.X);
                     timerCalc1--;
                     TimerCalc2--;
                     Timer--;
@@ -348,18 +412,26 @@ namespace Final_Project
                             i--;
                         }
                     }
-                    
-
-
-                        //bookmark   
-                    }
+                     
+                }
                 if (GameWinorLose.paused == true && healthPlayer < 0)
                 {
-                    
+                    buttonReturn.Update(mouseState, prevmouseState);
+                    if (buttonReturn.IsClicked(mouseState, prevmouseState))
+                    {
+                        screen = Screen.Gear;
+
+                    }
                 }
                 if (GameWinorLose.paused == true && healthEnemy < 0)
                 {
-                    playerMoney = playerMoney + (100 * Difficulty);
+                    buttonReturn.Update(mouseState, prevmouseState);
+                    if (buttonReturn.IsClicked(mouseState, prevmouseState))
+                    {
+                        playerMoney = playerMoney + (Difficulty * 100);
+                        screen = Screen.Gear;
+
+                    }
                 }
             }
             base.Update(gameTime);
@@ -377,8 +449,6 @@ namespace Final_Project
                 _spriteBatch.Draw(botEnemy, new Rectangle(botrectEnemy.Center, botrectEnemy.Size), null, Color.White, botAngle2, new Vector2(botEnemy.Width / 2, botEnemy.Height / 2), SpriteEffects.None, 1f);
                 _spriteBatch.Draw(healthbarplayer, healthbarplayerRect, Color.White);
                 _spriteBatch.Draw(healthbarEnemy, healthbarenemyRect, Color.White);
-                _spriteBatch.Draw(gun, new Rectangle((botrectPlayer.Center.X), botrectPlayer.Center.Y , gunRect.Width, gunRect.Height), null, Color.White, gunAngle1, new Vector2(gunRect.Width/2, gunRect.Height/2), SpriteEffects.None, 1f);
-                _spriteBatch.Draw(gun, new Rectangle((botrectEnemy.Center.X), botrectEnemy.Center.Y, gunRect.Width, gunRect.Height), null, Color.White, gunAngle2, new Vector2(gunRect.Width / 2, gunRect.Height / 2), SpriteEffects.None, 1f);
                 foreach (Bullet bullet in bullets)
                     bullet.Draw(_spriteBatch);
                 foreach (Bullet bullet in bullets1)
@@ -388,20 +458,22 @@ namespace Final_Project
             }
             if (GameWinorLose.paused == true && screen == Screen.Gameplay && healthPlayer < 1)
             {
-                _spriteBatch.DrawString(font, "You Lose", new Vector2(400, 400), Color.Black);
                 _spriteBatch.Draw(explosion, botrectPlayer, Color.White);
+                _spriteBatch.Draw(buttonReturnTexture, new Rectangle(500, 700, 150, 75), Color.White);
+                _spriteBatch.DrawString(font, "You Lose", new Vector2(400, 400), Color.Black);
 
             }
             if (GameWinorLose.paused == true && screen == Screen.Gameplay && healthEnemy < 1)
             {
-                _spriteBatch.DrawString(font, "You Win", new Vector2(400, 400), Color.Black);
                 _spriteBatch.Draw(explosion, botrectEnemy, Color.White);
+                _spriteBatch.Draw(buttonReturnTexture, new Rectangle(500, 700, 150, 75),Color.White);
+                _spriteBatch.DrawString(font, "You Win", new Vector2(400, 400), Color.Black);
 
             }
             if (screen == Screen.Intro)
             {
                 _spriteBatch.Draw(IntroTexture, new Rectangle(0, 0, 1200, 900), Color.White);
-                _spriteBatch.Draw(buttonStartTexture, new Rectangle(525, 233, 150, 75), Color.White);
+                _spriteBatch.Draw(buttonStartTexture, new Rectangle(525, 120, 150, 75), Color.White);
                 _spriteBatch.Draw(buttonOptionsTexture, new Rectangle(525, 385, 150, 75),Color.White);
                 _spriteBatch.Draw(buttonExitTexture, new Rectangle(525,540,150,75), Color.White);
             }
@@ -414,6 +486,18 @@ namespace Final_Project
             if (screen == Screen.Gear)
             {
                 _spriteBatch.Draw(GearTexture, new Rectangle(0, 0, 1200, 900), Color.White);
+                _spriteBatch.Draw(armourUp, new Rectangle(16, 250, 350, 216), Color.White);
+                _spriteBatch.Draw(damageUp, new Rectangle(425, 250, 350, 216), Color.White);
+                _spriteBatch.DrawString(Cashfont,playerMoney.ToString(), new Vector2(1000, 690), Color.White);
+                if (purchaseArmour.IsClicked(mouseState, prevmouseState) && playerMoney < 250)
+                {
+                        _spriteBatch.DrawString(font, "Not Enough Cash", new Vector2(400, 400), Color.Black);
+                }
+                if (PurchaseDamage.IsClicked(mouseState, prevmouseState) && playerMoney < 250)
+                {
+                        _spriteBatch.DrawString(font, "Not Enough Cash", new Vector2(400, 400), Color.Black);
+                    
+                }
             }
             if (screen == Screen.GameSelect)
             {

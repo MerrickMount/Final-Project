@@ -73,6 +73,30 @@
 /processorParam:TextureFormat=Color
 /build:Button.png
 
+#begin ButtonArmour.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ButtonArmour.png
+
+#begin ButtonDamage.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ButtonDamage.png
+
 #begin ButtonExit.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -144,6 +168,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:ButtonStart.png
+
+#begin Cash.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Cash.spritefont
 
 #begin damageUpgrade.png
 /importer:TextureImporter
@@ -319,4 +350,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:StartMenu.png
+
+#begin StartMenu1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:StartMenu1.png
 

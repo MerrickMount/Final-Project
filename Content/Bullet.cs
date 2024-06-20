@@ -10,8 +10,6 @@ namespace Final_Project.Content
 {
     internal class Bullet
     {
-        private float timer;
-
 
         private Texture2D _texture;
         private Rectangle _rect;
@@ -30,7 +28,7 @@ namespace Final_Project.Content
             _rect = new Rectangle(location.ToPoint(), new Point(_size, _size));
             _direction = target - location;
             _direction.Normalize();
-            _speed = 3;
+            _speed = 8;
         }
         public Rectangle Rect
         {
