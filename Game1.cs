@@ -17,21 +17,22 @@ namespace Final_Project
         Texture2D buttonStartTexture, buttonOptionsTexture, buttonExitTexture, buttonLevel1Texture, buttonLevel2Texture, buttonLevel3Texture;
         Texture2D background, IntroTexture, GearTexture, GameSelectTexture, OptionsMenuTexture;
         Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy, gun;
-        Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect, gunRect, gunRect2;
+        Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect, gunRect;
         Vector2 botspeed1, botspeed2, botLocation1, botlocation2;
         MouseState mouseState, prevmouseState;
         double healthmathplayer, healthPlayer, healthEnemy, healthmultiplier, healthmathEnemy, botplayerDamage, botenemyDamage;
         Random movementPlayer = new Random();
         Random movementEnemy = new Random();
         Random timer = new Random();
-        int timerCalc, timerCalc1, TimerCalc2, playerMoney, Timer, Timer2;
-        Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3, buttonStartGear, buttonExitGear, buttonExitOptions;
+        int timerCalc, timerCalc1, TimerCalc2, playerMoney, Timer, Timer2, Difficulty;
+        Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3, buttonStartGear, buttonExitGear, buttonExitOptions, TESTBUTTON;
         List<Bullet> bullets;
         List<Bullet> bullets1;
         Rectangle bulletRect;
         Vector2 bulletSpeed;
         Texture2D bulletTexture;
         float bulletLocation;
+        private SpriteFont font;
         enum Screen
         {
             Intro,
@@ -82,11 +83,13 @@ namespace Final_Project
             buttonStartGear = new Button(buttonExitTexture, new Rectangle(1070, 791, 120, 82));
             buttonExitGear = new Button(buttonExitTexture, new Rectangle(828,791,122,82));
             buttonExitOptions = new Button(buttonExitTexture, new Rectangle(1000, 800, 150, 75));
+            TESTBUTTON = new Button(buttonExitTexture, new Rectangle(1000, 800, 150, 75));
             gunRect = new Rectangle(0,0,101,50);
 
             bulletRect = new Rectangle(100,100,10,10);
             bullets = new List<Bullet>();
             bullets1 = new List<Bullet>();
+            GameWinorLose.paused = false;
             base.Initialize();
         }
 
@@ -110,7 +113,7 @@ namespace Final_Project
             GearTexture = Content.Load<Texture2D>("Options1");
             bulletTexture = Content.Load<Texture2D>("bullet");
             OptionsMenuTexture = Content.Load<Texture2D>("OPTIONSdone");
-
+            font = Content.Load<SpriteFont>("font");
             // TODO: use this.Content to load your game content here
         }
 
@@ -145,7 +148,7 @@ namespace Final_Project
                 buttonExitOptions.Update(mouseState, prevmouseState);
                 if (buttonExitOptions.IsClicked(mouseState, prevmouseState))
                 {
-                    screen = Screen.Gear;
+                    screen = Screen.Intro;
                 }
 
             }
@@ -178,6 +181,7 @@ namespace Final_Project
                     botenemyDamage = 1;
                     healthEnemy = 100;
                     GameWinorLose.paused = false;
+                    Difficulty = 1;
                 }
                 if (buttonLevel2.IsClicked(mouseState, prevmouseState))
                 {
@@ -185,6 +189,7 @@ namespace Final_Project
                     botenemyDamage = 2;
                     healthEnemy = 110;
                     GameWinorLose.paused = false;
+                    Difficulty = 2;
                 }
                 if (buttonLevel3.IsClicked(mouseState, prevmouseState))
                 {
@@ -192,12 +197,18 @@ namespace Final_Project
                     botenemyDamage = 3;
                     healthEnemy = 120;
                     GameWinorLose.paused = false;
+                    Difficulty = 3;
                 }
             }
             if (screen == Screen.Gameplay)
             {
                 if (GameWinorLose.paused == false)
                 {
+                    TESTBUTTON.Update(mouseState, prevmouseState);
+                    if (TESTBUTTON.IsClicked(mouseState, prevmouseState))
+                    {
+                        GameWinorLose.paused = true;
+                    }
                     if (healthPlayer < 1 )
                     {
                         GameWinorLose.paused = true;
@@ -249,8 +260,6 @@ namespace Final_Project
                         botspeed2.Y *= -1;
                         botspeed1.Y *= -1;
                         botspeed1.X *= -1;
-                        healthPlayer = healthPlayer - botenemyDamage;
-                        healthEnemy = healthEnemy - botplayerDamage;
                     }
 
                     if (healthPlayer < 100)
@@ -266,9 +275,9 @@ namespace Final_Project
                     if (Timer == 0)
                     {
                         Timer = 60;
-                        if (Vector2.Distance(botrectEnemy.Location.ToVector2(), botrectPlayer.Location.ToVector2()) < 300)
+                        if (Vector2.Distance(botrectEnemy.Location.ToVector2(), botrectPlayer.Location.ToVector2()) <= 350)
                         {
-                            bullets.Add(new Bullet(bulletTexture, botrectPlayer.Location.ToVector2(), botrectEnemy.Location.ToVector2(), 10));
+                            bullets.Add(new Bullet(bulletTexture, botrectPlayer.Center.ToVector2(), botrectEnemy.Center.ToVector2(), 10));
 
                         }
 
@@ -276,9 +285,9 @@ namespace Final_Project
                     if (Timer2 == 0)
                     {
                         Timer2 = 60;
-                        if (Vector2.Distance(botrectPlayer.Location.ToVector2(), botrectEnemy.Location.ToVector2()) < 300)
+                        if (Vector2.Distance(botrectPlayer.Location.ToVector2(), botrectEnemy.Location.ToVector2()) <= 350)
                         {
-                            bullets1.Add(new Bullet(bulletTexture, botrectEnemy.Location.ToVector2(), botrectPlayer.Location.ToVector2(), 10));
+                            bullets1.Add(new Bullet(bulletTexture, botrectEnemy.Center.ToVector2(), botrectPlayer.Center.ToVector2(), 10));
 
                         }
 
@@ -316,7 +325,7 @@ namespace Final_Project
                         bullets1[i].Update();
                         if (bullets1[i].Rect.Intersects(botrectPlayer))
                         {
-                            healthEnemy = healthEnemy - botplayerDamage;
+                            healthPlayer = healthPlayer - botenemyDamage;
                             bullets1.RemoveAt(i);
                             i--;
                         }
@@ -336,13 +345,13 @@ namespace Final_Project
 
                         //bookmark   
                     }
-                if (GameWinorLose.paused = true && healthPlayer < 0)
+                if (GameWinorLose.paused == true && healthPlayer < 0)
                 {
-
+                    
                 }
-                if (GameWinorLose.paused = true && healthEnemy < 0)
+                if (GameWinorLose.paused == true && healthEnemy < 0)
                 {
-
+                    playerMoney = playerMoney + (100 * Difficulty);
                 }
             }
             base.Update(gameTime);
@@ -366,6 +375,17 @@ namespace Final_Project
                     bullet.Draw(_spriteBatch);
                 foreach (Bullet bullet in bullets1)
                     bullet.Draw(_spriteBatch);
+
+                 _spriteBatch.Draw(buttonExitTexture, new Rectangle(1000, 800, 150, 75), Color.White);
+            }
+            if (GameWinorLose.paused == true && screen == Screen.Gameplay && healthPlayer < 1)
+            {
+                _spriteBatch.DrawString(font, "You Lose", new Vector2(400, 400), Color.Black);
+            }
+            if (GameWinorLose.paused == true && screen == Screen.Gameplay && healthEnemy < 1)
+            {
+                _spriteBatch.DrawString(font, "You Win", new Vector2(400, 400), Color.Black);
+                _spriteBatch.Draw()
             }
             if (screen == Screen.Intro)
             {
