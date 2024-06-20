@@ -15,8 +15,8 @@ namespace Final_Project
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         Texture2D buttonStartTexture, buttonOptionsTexture, buttonExitTexture, buttonLevel1Texture, buttonLevel2Texture, buttonLevel3Texture;
-        Texture2D background, IntroTexture, GearTexture, GameSelectTexture, OptionsMenuTexture;
-        Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy, gun;
+        Texture2D background, IntroTexture, GearTexture, GameSelectTexture, OptionsMenuTexture, explosion;
+        Texture2D botPlayer, botEnemy, healthbarplayer, healthbarEnemy, gun, armourUp, damageUp;
         Rectangle botrectPlayer, botrectEnemy, healthbarplayerRect, healthbarenemyRect, gunRect;
         Vector2 botspeed1, botspeed2, botLocation1, botlocation2;
         MouseState mouseState, prevmouseState;
@@ -25,7 +25,7 @@ namespace Final_Project
         Random movementEnemy = new Random();
         Random timer = new Random();
         int timerCalc, timerCalc1, TimerCalc2, playerMoney, Timer, Timer2, Difficulty;
-        Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3, buttonStartGear, buttonExitGear, buttonExitOptions, TESTBUTTON;
+        Button buttonStart, buttonOption, buttonExit, buttonLevel1, buttonLevel2, buttonLevel3, buttonStartGear, buttonExitGear, buttonExitOptions, TESTBUTTON, purchaseArmour, PurchaseDamage;
         List<Bullet> bullets;
         List<Bullet> bullets1;
         Rectangle bulletRect;
@@ -55,6 +55,8 @@ namespace Final_Project
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
+            //Window.Title = "Bot Arena 4";                 //REMOVE COMMENT MARKS FOR THIS ONE BEFORE HANDING IN
             _graphics.PreferredBackBufferHeight = 900;
             _graphics.PreferredBackBufferWidth = 1200;
             _graphics.ApplyChanges();
@@ -85,6 +87,8 @@ namespace Final_Project
             buttonExitOptions = new Button(buttonExitTexture, new Rectangle(1000, 800, 150, 75));
             TESTBUTTON = new Button(buttonExitTexture, new Rectangle(1000, 800, 150, 75));
             gunRect = new Rectangle(0,0,101,50);
+            purchaseArmour = new Button(armourUp, new Rectangle(10, 10, 100, 100));
+            PurchaseDamage = new Button(damageUp, new Rectangle(10, 10, 100, 100));
 
             bulletRect = new Rectangle(100,100,10,10);
             bullets = new List<Bullet>();
@@ -114,6 +118,9 @@ namespace Final_Project
             bulletTexture = Content.Load<Texture2D>("bullet");
             OptionsMenuTexture = Content.Load<Texture2D>("OPTIONSdone");
             font = Content.Load<SpriteFont>("font");
+            explosion = Content.Load<Texture2D>("explosion");
+            damageUp = Content.Load<Texture2D>("damageUpgrade");
+            armourUp = Content.Load<Texture2D>("Shield");
             // TODO: use this.Content to load your game content here
         }
 
@@ -123,6 +130,7 @@ namespace Final_Project
             prevmouseState = mouseState;
             mouseState = Mouse.GetState();
             Window.Title = mouseState.X + ", " + mouseState.Y; //REMOVE THIS BEFORE FINAL HAND IN
+            
             if (screen == Screen.Intro)
             {
                 buttonStart.Update(mouseState, prevmouseState);
@@ -381,11 +389,14 @@ namespace Final_Project
             if (GameWinorLose.paused == true && screen == Screen.Gameplay && healthPlayer < 1)
             {
                 _spriteBatch.DrawString(font, "You Lose", new Vector2(400, 400), Color.Black);
+                _spriteBatch.Draw(explosion, botrectPlayer, Color.White);
+
             }
             if (GameWinorLose.paused == true && screen == Screen.Gameplay && healthEnemy < 1)
             {
                 _spriteBatch.DrawString(font, "You Win", new Vector2(400, 400), Color.Black);
-                _spriteBatch.Draw()
+                _spriteBatch.Draw(explosion, botrectEnemy, Color.White);
+
             }
             if (screen == Screen.Intro)
             {
